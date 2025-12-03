@@ -1,0 +1,6 @@
+name: PannoniaCore
+version: '1.0'
+main: org.vitya0717.pannoniaCore.Main
+api-version: '1.21'
+authors: [ vitya0717 ]
+description: Event rendszer kezelo plugin

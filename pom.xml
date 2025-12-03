@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.vitya0717</groupId>
+    <artifactId>pannoniacore</artifactId>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+    <name>PannoniaCore</name>
+
+    <properties>
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- A modulok verziója is innen jöhet, ha akarod -->
+        <pannonia.api.version>${project.version}</pannonia.api.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>papermc-repo</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Spigot/Paper API -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.21.5-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Ha később csinálsz külön Pannonia-API projektet, ide jön -->
+        <!--
+        <dependency>
+            <groupId>org.vitya0717</groupId>
+            <artifactId>pannonia-api</artifactId>
+            <version>${pannonia.api.version}</version>
+        </dependency>
+        -->
+    </dependencies>
+
+    <build>
+        <defaultGoal>clean package</defaultGoal>
+        <finalName>PannoniaCore</finalName> <!-- így lesz a JAR neve: PannoniaCore.jar -->
+
+        <plugins>
+            <!-- Compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- Shade plugin – csak akkor shade-elünk, ha külső libet akarunk beépíteni -->
+            <!-- (pl. Adventure, ConfigLib, HikariCP, stb.) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>shade</goal></goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <relocations>
+                                <!-- Példa: ha net.kyori adventure-t használod -->
+                                <!--
+                                <relocation>
+                                    <pattern>net.kyori</pattern>
+                                    <shadedPattern>hu.pannonia.libs.kyori</shadedPattern>
+                                </relocation>
+                                -->
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering> <!-- hogy @version@, @name@ működjön a plugin.yml-ben -->
+            </resource>
+        </resources>
+    </build>
+</project>
