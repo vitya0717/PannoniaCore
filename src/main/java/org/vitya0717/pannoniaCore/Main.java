@@ -16,7 +16,7 @@ public final class Main extends JavaPlugin {
        this.plugin = this; // set the plugin instance
 
         moduleManager = new ModuleManager(this);
-
+        //IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
         try {
             moduleManager.LoadModules(); // load plugin modules
         } catch (Exception e) {

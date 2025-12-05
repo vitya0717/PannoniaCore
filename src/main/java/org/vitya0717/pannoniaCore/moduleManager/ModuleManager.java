@@ -1,12 +1,11 @@
 package org.vitya0717.pannoniaCore.moduleManager;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.vitya0717.pannoniaCore.Main;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.AnnotationTypeMismatchException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
@@ -15,7 +14,6 @@ import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Logger;
 
 public class ModuleManager {
 
@@ -23,43 +21,52 @@ public class ModuleManager {
     private final List<String> enabledModules = List.of("Test.jar");
 
 
-
     public ModuleManager(Main plugin) {
-        this.plugin=plugin;
+        this.plugin = plugin;
     }
 
 
     public void LoadModules() throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-
         File folder = new File(plugin.getDataFolder(), "modules");
+        if (!folder.exists()) folder.mkdirs();
 
-        if(!folder.exists()) {
-            folder.mkdirs();
-        }
+        File[] files = folder.listFiles(f -> f.getName().endsWith(".jar"));
+        if (files == null || files.length == 0) return;
 
-        if(folder.list() != null && !Arrays.stream(folder.list()).toList().isEmpty()) {
-            for (File file : folder.listFiles()) {
-                URLClassLoader classLoader = new URLClassLoader(new URL[]{file.toURI().toURL()}, getClass().getClassLoader());
+        URL[] urls = Arrays.stream(files)
+                .map(f -> {
+                    try {
+                        return f.toURI().toURL();
+                    } catch (MalformedURLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).toArray(URL[]::new);
 
-                JarFile jarFile = new JarFile(file);
+        try (URLClassLoader classLoader = new URLClassLoader(urls, getClass().getClassLoader())) {
 
-                Enumeration<JarEntry> entries = jarFile.entries();
+            for (File file : files) {
+                try (JarFile jarFile = new JarFile(file)) {
 
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
+                    Enumeration<JarEntry> entries = jarFile.entries();
 
-                    if(!entry.getName().endsWith(".class")) continue;
+                    while (entries.hasMoreElements()) {
+                        JarEntry entry = entries.nextElement();
 
-                    String className = entry.getName().replace("/", ".").replace(".class", "");
-                    Bukkit.getLogger().info(className);
-                    Class<?> clazz = classLoader.loadClass(className);
+                        if (entry.isDirectory() || !entry.getName().endsWith(".class")) continue;
 
-                    PannoniaModule module = (PannoniaModule) clazz.getDeclaredConstructor().newInstance();
+                        String className = entry.getName().replace('/', '.').substring(0, entry.getName().length() - 6);
+                        Class<?> clazz = classLoader.loadClass(className);
 
-                    module.setInstance(plugin);
-                    module.loadConfig();
+                        if (PannoniaModule.class.isAssignableFrom(clazz) && !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers())) {
+
+                            Bukkit.getLogger().info("Loading module: " + clazz.getSimpleName());
+
+                            PannoniaModule module = (PannoniaModule) clazz.getDeclaredConstructor().newInstance();
+                            module.setInstance(plugin);
+                            module.onEnable();
+                        }
+                    }
                 }
-                classLoader.close();
             }
         }
     }
