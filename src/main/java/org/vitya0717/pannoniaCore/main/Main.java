@@ -1,4 +1,4 @@
-package org.vitya0717.pannoniaCore;
+package org.vitya0717.pannoniaCore.main;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.vitya0717.pannoniaCore.moduleManager.ModuleManager;

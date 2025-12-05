@@ -1,8 +1,7 @@
 package org.vitya0717.pannoniaCore.moduleManager;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.vitya0717.pannoniaCore.Main;
+import org.vitya0717.pannoniaCore.main.Main;
 
 import java.io.File;
 import java.io.IOException;

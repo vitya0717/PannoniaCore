@@ -1,6 +1,6 @@
 package org.vitya0717.pannoniaCore.moduleManager;
 
-import org.vitya0717.pannoniaCore.Main;
+import org.vitya0717.pannoniaCore.main.Main;
 
 public interface PannoniaModule {
 
