@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 public class ConsoleUtils {
 
     public static void SendConsole(String message) {
-        Bukkit.getConsoleSender().sendMessage(message);
+        Bukkit.getConsoleSender().sendMessage(translateColors(message));
     }
 
 
