@@ -17,11 +17,11 @@ import java.util.logging.Logger;
 public class ConfigurationAPI {
 
     private final File configFile;
-    private final Class<?> module;
+    private final InputStream module;
     private final File configFolder;
     private FileConfiguration fileConfiguration;
 
-    public ConfigurationAPI(Class<?> module, String moduleName, String configFileName) {
+    public ConfigurationAPI(InputStream module, String moduleName, String configFileName) {
         this.module = module;
         this.configFolder = new File(Main.getPlugin(Main.class).getDataFolder()+"/modules/", moduleName);
         this.configFile = new File(configFolder, configFileName);
@@ -38,7 +38,7 @@ public class ConfigurationAPI {
             Logger.getLogger("PannoniaCore").severe("Sorry, only YAML files are supported at this time.");
         }
 
-        try (InputStream in = module.getResourceAsStream("/"+configFile.getName())) {
+        try (InputStream in = module) {
 
             if (in == null) throw new FileNotFoundException();
 
