@@ -4,11 +4,9 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.vitya0717.pannoniaCore.main.Main;
+import org.vitya0717.pannoniaCore.moduleManager.PannoniaModule;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Enumeration;
@@ -41,10 +39,11 @@ public class ConfigurationAPI {
             Logger.getLogger("PannoniaCore").severe("Sorry, only YAML files are supported at this time.");
         }
 
-        var file = new File(BASE_PATH + "/modules/" + configFolder.getName());
+        var file = new File(BASE_PATH + "/modules/" + configFolder.getName().toLowerCase()+".jar");
 
         JarEntry findEntry = null;
         JarFile jarFile = new JarFile(file);
+        byte[] configBuffer;
 
         Enumeration<JarEntry> enumerations = jarFile.entries();
 
@@ -56,18 +55,16 @@ public class ConfigurationAPI {
             }
         }
 
-
         if (findEntry == null) throw new FileNotFoundException();
 
         try (InputStream in = jarFile.getInputStream(findEntry)) {
 
             if (in == null) throw new FileNotFoundException();
-            String content = new String(in.readAllBytes());
 
-            Logger.getLogger("PannoniaCore").warning(content);
+            configBuffer = in.readAllBytes();
 
             if (!configFile.exists()) {
-                Files.copy(in, configFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(new ByteArrayInputStream(configBuffer), configFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
 
             fileConfiguration = new YamlConfiguration();
@@ -79,6 +76,8 @@ public class ConfigurationAPI {
             Logger.getLogger("PannoniaCore").severe("Error occurred while trying to load configuration.");
             e.printStackTrace();
         }
+        jarFile.close();
+        configBuffer = null;
     }
 
     public FileConfiguration getConfig() {

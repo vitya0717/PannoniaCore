@@ -53,16 +53,7 @@ public class ModuleManager {
 
                     while (entries.hasMoreElements()) {
                         JarEntry entry = entries.nextElement();
-/* if (entry.getName().equalsIgnoreCase("config.yml")) {
-                            InputStream input = jarFile.getInputStream(entry);
 
-                            String content = new String(input.readAllBytes());
-
-                            Logger.getLogger("debug").warning(content);
-
-                            input.close();
-
-                        }*/
                         if (entry.isDirectory() || !entry.getName().endsWith(".class")) continue;
 
                         String className = entry.getName().replace('/', '.').substring(0, entry.getName().length() - 6);
