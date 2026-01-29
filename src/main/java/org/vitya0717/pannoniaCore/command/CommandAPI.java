@@ -1,7 +1,10 @@
 package org.vitya0717.pannoniaCore.command;
 
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
+import org.vitya0717.pannoniaCore.main.Main;
+import org.vitya0717.pannoniaCore.moduleManager.PannoniaModule;
 
 import java.util.List;
 
@@ -48,5 +51,9 @@ public class CommandAPI extends Command {
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
         return List.of();
+    }
+
+    public void register(Command command) {
+        CommandRegister.registerCommand(command, Main.getPlugin(Main.class));
     }
 }
