@@ -53,7 +53,7 @@ public class CommandAPI extends Command {
         return List.of();
     }
 
-    public void register(Command command) {
-        CommandRegister.registerCommand(command, Main.getPlugin(Main.class));
+    public void register() {
+        CommandRegister.registerCommand(this, Main.getPlugin(Main.class));
     }
 }
