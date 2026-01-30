@@ -1,6 +1,7 @@
 package org.vitya0717.pannoniaCore.main;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.vitya0717.pannoniaCore.lootTable.LootTableManager;
 import org.vitya0717.pannoniaCore.moduleManager.ModuleManager;
 
 import java.util.logging.Logger;
@@ -10,12 +11,15 @@ public final class Main extends JavaPlugin {
 
     private Main plugin;
     private ModuleManager moduleManager;
+    private LootTableManager lootTableManager;
 
     @Override
     public void onEnable() {
        this.plugin = this; // set the plugin instance
 
         moduleManager = new ModuleManager(this);
+        lootTableManager = new LootTableManager(this);
+
         //IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
         try {
             moduleManager.LoadModules(); // load plugin modules
