@@ -11,7 +11,10 @@ public class ConsoleUtils {
 
 
     public static String translateColors(String s) {
-        s = ChatColor.translateAlternateColorCodes('&', s);
+
+        if (s != null && !s.isEmpty()) {
+            s = ChatColor.translateAlternateColorCodes('&', s);
+        }
 
         return s;
     }

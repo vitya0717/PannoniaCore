@@ -11,7 +11,7 @@ public final class Main extends JavaPlugin {
 
     private Main plugin;
     private ModuleManager moduleManager;
-    private LootTableManager lootTableManager;
+    public LootTableManager lootTableManager;
 
     @Override
     public void onEnable() {
