@@ -1,8 +1,8 @@
 package org.vitya0717.pannoniaCore.main;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.vitya0717.pannoniaCore.lootTable.LootTableManager;
 import org.vitya0717.pannoniaCore.moduleManager.ModuleManager;
+import org.vitya0717.pannoniaCore.moduleManager.PannoniaModule;
 
 import java.util.logging.Logger;
 
@@ -11,14 +11,12 @@ public final class Main extends JavaPlugin {
 
     private Main plugin;
     private ModuleManager moduleManager;
-    public LootTableManager lootTableManager;
 
     @Override
     public void onEnable() {
        this.plugin = this; // set the plugin instance
 
         moduleManager = new ModuleManager(this);
-        lootTableManager = new LootTableManager(this);
 
         //IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
         try {
@@ -31,7 +29,19 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.plugin = null; //remove plugin instance
+        if (moduleManager != null) {
+
+            for (PannoniaModule module : moduleManager.getModules()) {
+                try {
+                    module.onDisable();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            moduleManager.unloadModules();
+        }
+
+        this.plugin = null;
     }
 
     public Main getPlugin() {

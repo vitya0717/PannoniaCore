@@ -1,8 +1,11 @@
 name: PannoniaCore
-version: '1.0'
+version: '1.0.0'
 main: org.vitya0717.pannoniaCore.main.Main
 api-version: '1.21'
 authors: [ vitya0717 ]
-description: Event rendszer kezelo plugin
+description: Pannónia modulok betöltéséért felelős plugin.
 softdepend:
   - DiscordSRV
+  - DecentHolograms
+  - PlaceholderAPI
+  - Multiverse-Core

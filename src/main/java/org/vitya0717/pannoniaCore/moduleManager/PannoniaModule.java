@@ -5,6 +5,6 @@ import org.vitya0717.pannoniaCore.main.Main;
 public interface PannoniaModule {
 
     void setInstance(Main plugin);
-    void loadConfig();
     void onEnable();
+    void onDisable();
 }

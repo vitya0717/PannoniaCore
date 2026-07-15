@@ -55,29 +55,39 @@ public class ConfigurationAPI {
             }
         }
 
-        if (findEntry == null) throw new FileNotFoundException();
-
-        try (InputStream in = jarFile.getInputStream(findEntry)) {
-
-            if (in == null) throw new FileNotFoundException();
-
-            configBuffer = in.readAllBytes();
-
-            if (!configFile.exists()) {
-                Files.copy(new ByteArrayInputStream(configBuffer), configFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            }
+        if (findEntry == null) {
+            configFile.createNewFile();
 
             fileConfiguration = new YamlConfiguration();
-            fileConfiguration.load(configFile);
+            try {
+                fileConfiguration.load(configFile);
+            } catch (InvalidConfigurationException e) {
+                throw new RuntimeException(e);
+            }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidConfigurationException e) {
-            Logger.getLogger("PannoniaCore").severe("Error occurred while trying to load configuration.");
-            e.printStackTrace();
+        } else {
+            try (InputStream in = jarFile.getInputStream(findEntry)) {
+
+                if (in == null) throw new FileNotFoundException();
+
+                configBuffer = in.readAllBytes();
+
+                if (!configFile.exists()) {
+                    Files.copy(new ByteArrayInputStream(configBuffer), configFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                }
+
+                fileConfiguration = new YamlConfiguration();
+                fileConfiguration.load(configFile);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InvalidConfigurationException e) {
+                Logger.getLogger("PannoniaCore").severe("Error occurred while trying to load configuration.");
+                e.printStackTrace();
+            }
+            jarFile.close();
+            configBuffer = null;
         }
-        jarFile.close();
-        configBuffer = null;
     }
 
     public FileConfiguration getConfig() {
